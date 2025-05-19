@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Planilhas</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+        }
+        .link-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            background: linear-gradient(to right, #ffffff, #f8fafc);
+        }
+        .link-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(to right, #e6f7f7, #d9ecec);
+        }
+        .link-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #34a9aa;
+            color: white;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 8px;
+            min-width: 200px;
+            justify-content: space-between;
+        }
+        .link-button:hover {
+            background-color: #ff7500;
+            transform: scale(1.05);
+            border-color: #ff7500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+        .link-button i {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .link-button:hover i {
+            transform: translateX(4px);
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .logo {
+            max-width: 220px;
+            height: auto;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        .search-input {
+            background: white;
+            border-color: #34a9aa;
+            transition: box-shadow 0.2s ease;
+        }
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(52, 169, 170, 0.2);
+            border-color: #34a9aa;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+        }
+        .category-label {
+            color: #ff7500;
+        }
+        .header-text {
+            color: #34a9aa;
+        }
+        .pagination-button {
+            background-color: #34a9aa;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin: 0 4px;
+            transition: background-color 0.2s ease;
+        }
+        .pagination-button:hover {
+            background-color: #ff7500;
+        }
+        .pagination-button.disabled {
+            background-color: #d1d5db;
+            cursor: not-allowed;
+        }
+        .category-select {
+            background-color: #34a9aa;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            transition: background-color 0.2s ease;
+        }
+        .category-select:hover {
+            background-color: #ff7500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto p-8 max-w-5xl my-8">
+        <header class="text-center mb-10">
+            <img src="https://cache2net3.com/Repositorio/12361/Logo/Design sem nome.webp" alt="Logo do Portal" class="logo mx-auto mb-6">
+            <h1 class="text-4xl font-bold header-text">Portal de Exames Periódicos</h1>
+            <p class="text-gray-600 mt-3 text-lg">Acesse e gerencie suas planilhas de forma prática e organizada</p>
+        </header>
+
+        <div class="mb-8 flex flex-col sm:flex-row gap-4">
+            <input type="text" id="searchInput" placeholder="Pesquisar planilhas..." class="search-input w-full p-4 rounded-lg border focus:outline-none focus:ring-0">
+            <select id="categoryFilter" class="category-select">
+                <option value="all">Todas as Categorias</option>
+                <option value="exames">Exames</option>
+                <option value="financeiro">Financeiro</option>
+                <option value="vendas">Vendas</option>
+            </select>
+        </div>
+
+        <div class="p-8 rounded-lg">
+            <h2 class="text-2xl font-semibold header-text mb-6">Planilhas Disponíveis</h2>
+            <ul id="linkList" class="space-y-5"></ul>
+            <div id="pagination" class="flex justify-center mt-6"></div>
+        </div>
+
+        <footer class="text-center text-gray-500 text-sm mt-10">
+            <p>© 2025 Portal de Planilhas. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        const links = [
+            {
+                title: "A.P.J. Alcantara Comercio",
+                url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTUzhC93oPeBCsmrFEbScUv-gphtjzbk87UxWOqkJJ_8qEk9KUMAG0VmwWOSaaYHocKkuJX0oBOlMQA/pubhtml?gid=0&single=true",
+                description: "Relatório dos exames periódicos.",
+                category: "exames"
+            },
+            {
+                title: "Controle Financeiro 2025",
+                url: "https://docs.google.com/spreadsheets/d/example2",
+                description: "Informações sobre o controle financeiro anual.",
+                category: "financeiro"
+            },
+            {
+                title: "Vendas Trimestrais",
+                url: "https://docs.google.com/spreadsheets/d/example3",
+                description: "Relatório de vendas trimestral.",
+                category: "vendas"
+            }
+            // Adicione os outros 84 links aqui no mesmo formato
+        ];
+
+        const itemsPerPage = 10;
+        let currentPage = 1;
+
+        function renderLinks(filteredLinks, page) {
+            const linkList = document.getElementById('linkList');
+            linkList.innerHTML = '';
+
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedLinks = filteredLinks.slice(start, end);
+
+            paginatedLinks.forEach(link => {
+                const li = document.createElement('li');
+                li.className = 'link-item p-6 rounded-xl fade-in';
+                li.dataset.category = link.category;
+                li.innerHTML = `
+                    <a href="${link.url}" target="_blank" class="link-button">
+                        ${link.title}
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <p class="text-gray-600 text-sm mt-3">${link.description}</p>
+                    <span class="text-xs category-label">Categoria: ${link.category.charAt(0).toUpperCase() + link.category.slice(1)}</span>
+                `;
+                linkList.appendChild(li);
+            });
+
+            renderPagination(filteredLinks.length, page);
+        }
+
+        function renderPagination(totalItems, page) {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            const prevButton = document.createElement('button');
+            prevButton.className = `pagination-button ${page === 1 ? 'disabled' : ''}`;
+            prevButton.textContent = 'Anterior';
+            prevButton.disabled = page === 1;
+            prevButton.onclick = () => {
+                if (page > 1) {
+                    currentPage--;
+                    filterAndRender();
+                }
+            };
+            pagination.appendChild(prevButton);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.className = `pagination-button ${i === page ? 'bg-[#ff7500]' : ''}`;
+                button.textContent = i;
+                button.onclick = () => {
+                    currentPage = i;
+                    filterAndRender();
+                };
+                pagination.appendChild(button);
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.className = `pagination-button ${page === totalPages ? 'disabled' : ''}`;
+            nextButton.textContent = 'Próximo';
+            nextButton.disabled = page === totalPages;
+            nextButton.onclick = () => {
+                if (page < totalPages) {
+                    currentPage++;
+                    filterAndRender();
+                }
+            };
+            pagination.appendChild(nextButton);
+        }
+
+        function filterAndRender() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedCategory = document.getElementById('categoryFilter').value;
+
+            const filteredLinks = links.filter(link => {
+                const matchesSearch = link.title.toLowerCase().includes(searchTerm) ||
+                                     link.description.toLowerCase().includes(searchTerm) ||
+                                     link.category.toLowerCase().includes(searchTerm);
+                const matchesCategory = selectedCategory === 'all' || link.category === selectedCategory;
+                return matchesSearch && matchesCategory;
+            });
+
+            renderLinks(filteredLinks, currentPage);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', () => {
+            currentPage = 1;
+            filterAndRender();
+        });
+
+        document.getElementById('categoryFilter').addEventListener('change', () => {
+            currentPage = 1;
+            filterAndRender();
+        });
+
+        // Inicializar
+        filterAndRender();
+    </script>
+</body>
+</html>
